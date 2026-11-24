@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - MedInfo Digital</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0284c7">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="brand">
+        <span class="brand-icon">🏥</span>
+        <h1>MedInfo <span>Digital</span></h1>
+      </div>
+      <p class="tagline" style="margin-bottom: 20px;">Base de Conhecimento Médico & Inteligência de Sintomas</p>
+
+      <!-- Abas de Alternância -->
+      <div class="auth-tabs">
+        <button type="button" id="tab-login" class="auth-tab active" onclick="alternarModoAuth('login')">Entrar</button>
+        <button type="button" id="tab-cadastro" class="auth-tab" onclick="alternarModoAuth('cadastro')">Criar Conta</button>
+      </div>
+
+      <!-- Formulário de Login -->
+      <form id="form-login" class="auth-form" onsubmit="event.preventDefault(); realizarLogin();">
+        <div class="input-group">
+          <label for="login-email">E-mail</label>
+          <input type="email" id="login-email" placeholder="seuemail@exemplo.com" required>
+        </div>
+        <div class="input-group">
+          <label for="login-senha">Senha</label>
+          <div class="password-wrapper">
+            <input type="password" id="login-senha" placeholder="Digite sua senha" required>
+            <button type="button" class="btn-toggle-pass" onclick="alternarVisibilidadeSenha('login-senha', this)" title="Mostrar/Ocultar senha">👁️</button>
+          </div>
+        </div>
+        <p id="erro-login" class="auth-error" role="alert"></p>
+        <button type="submit" class="btn-auth">Acessar Plataforma</button>
+        <p class="auth-switch">
+          Ainda não tem conta? <a href="#" onclick="event.preventDefault(); alternarModoAuth('cadastro');">Criar conta agora</a>
+        </p>
+      </form>
+
+      <!-- Formulário de Cadastro -->
+      <form id="form-cadastro" class="auth-form" style="display: none;" onsubmit="event.preventDefault(); realizarCadastro();">
+        <div class="input-group">
+          <label for="cad-nome">Nome completo</label>
+          <input type="text" id="cad-nome" placeholder="Como deseja ser chamado(a)" required>
+        </div>
+        <div class="input-group">
+          <label for="cad-email">E-mail</label>
+          <input type="email" id="cad-email" placeholder="seuemail@exemplo.com" required>
+        </div>
+        <div class="input-group">
+          <label for="cad-senha">Senha</label>
+          <div class="password-wrapper">
+            <input type="password" id="cad-senha" placeholder="Mínimo de 4 caracteres" minlength="4" required>
+            <button type="button" class="btn-toggle-pass" onclick="alternarVisibilidadeSenha('cad-senha', this)" title="Mostrar/Ocultar senha">👁️</button>
+          </div>
+        </div>
+        <p id="erro-cadastro" class="auth-error" role="alert"></p>
+        <button type="submit" class="btn-auth btn-register">Cadastrar e Entrar</button>
+        <p class="auth-switch">
+          Já possui uma conta? <a href="#" onclick="event.preventDefault(); alternarModoAuth('login');">Fazer login</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

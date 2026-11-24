@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedInfo Digital - Assistente de Saúde e Enfermidades</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0284c7">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navegação Principal -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-top">
+        <div class="brand">
+          <span class="brand-icon">🏥</span>
+          <h1>MedInfo <span>Digital</span></h1>
+        </div>
+        <div class="user-bar">
+          <span id="usuario-logado-nome" class="user-greeting"></span>
+
+          <!-- Botão e Painel de Personalização de Tema -->
+          <div class="theme-settings-wrapper">
+            <button type="button" id="btn-abrir-tema" class="btn-theme-toggle" onclick="alternarPainelTema()" title="Personalizar aparência">
+              🎨 Tema
+            </button>
+
+            <div id="painel-tema" class="theme-popover" style="display: none;">
+              <div class="theme-popover-header">
+                <strong>Personalizar Aparência</strong>
+                <button type="button" class="btn-close-popover" onclick="alternarPainelTema()">&times;</button>
+              </div>
+
+              <div class="theme-option-group">
+                <label>Modo de Exibição</label>
+                <div class="mode-switch-buttons">
+                  <button type="button" id="btn-modo-claro" class="mode-btn active" onclick="definirModoTema('light')">☀️ Claro</button>
+                  <button type="button" id="btn-modo-escuro" class="mode-btn" onclick="definirModoTema('dark')">🌙 Escuro</button>
+                </div>
+              </div>
+
+              <div class="theme-option-group">
+                <label>Cor Principal</label>
+                <div class="color-swatches">
+                  <button type="button" class="swatch" style="background: #0284c7;" onclick="aplicarCorTema('#0284c7', '#0369a1')" title="Azul Clínico"></button>
+                  <button type="button" class="swatch" style="background: #059669;" onclick="aplicarCorTema('#059669', '#047857')" title="Verde Saúde"></button>
+                  <button type="button" class="swatch" style="background: #7c3aed;" onclick="aplicarCorTema('#7c3aed', '#6d28d9')" title="Roxo Moderno"></button>
+                  <button type="button" class="swatch" style="background: #e11d48;" onclick="aplicarCorTema('#e11d48', '#be123c')" title="Carmesim"></button>
+                  <button type="button" class="swatch" style="background: #d97706;" onclick="aplicarCorTema('#d97706', '#b45309')" title="Âmbar"></button>
+                </div>
+              </div>
+
+              <div class="theme-option-group custom-picker-row">
+                <label for="input-cor-personalizada">Cor livre:</label>
+                <input type="color" id="input-cor-personalizada" value="#0284c7" oninput="aplicarCorPersonalizada(this.value)">
+              </div>
+
+              <button type="button" class="btn-reset-theme" onclick="resetarTemaPadrao()">Restaurar Padrão</button>
+            </div>
+          </div>
+
+          <button type="button" class="btn-logout" onclick="sairDaConta()">Sair</button>
+        </div>
+      </div>
+      <p class="tagline">Base de Conhecimento Médico & Inteligência de Sintomas</p>
+    </div>
+  </header>
+
+  <main class="app-container">
+
+    <!-- Caixa de Busca -->
+    <section class="search-section">
+      <label for="input-pesquisa">Qual condição de saúde você deseja consultar hoje?</label>
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="input-pesquisa" 
+          list="lista-doencas"
+          placeholder="Ex: Dengue, Diabetes, Gripe, Hipertensão..." 
+          autocomplete="off"
+        >
+        <datalist id="lista-doencas">
+          <option value="Dengue">
+          <option value="Gripe">
+          <option value="Diabetes">
+          <option value="Hipertensão">
+        </datalist>
+        <button type="button" id="btn-pesquisar" onclick="buscarDoenca()">
+          <span>Consultar IA</span>
+        </button>
+      </div>
+
+      <div class="suggestions">
+        <small>Sugestões frequentes:</small>
+        <button type="button" onclick="preencherEBuscar('Dengue')">Dengue</button>
+        <button type="button" onclick="preencherEBuscar('Gripe')">Gripe</button>
+        <button type="button" onclick="preencherEBuscar('Diabetes')">Diabetes</button>
+        <button type="button" onclick="preencherEBuscar('Hipertensão')">Hipertensão</button>
+      </div>
+
+      <!-- Histórico de Pesquisas Recentes -->
+      <div id="historico-container" class="suggestions" style="display: none; margin-top: 8px;">
+        <small>Recentes:</small>
+        <div id="lista-historico" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+      </div>
+    </section>
+
+    <!-- Exibição de Resposta da IA -->
+    <section id="area-resposta" class="response-section" aria-live="polite" style="display: none;"></section>
+
+    <!-- Área de Interação e Comentários -->
+    <section class="comments-section">
+      <div class="section-title">
+        <h2>💬 Comunidade e Relatos</h2>
+        <p id="subtitulo-comentarios">Deixe suas dúvidas, dicas de prevenção ou relatos sobre a enfermidade pesquisada.</p>
+      </div>
+
+      <!-- Formulário -->
+      <form class="comment-form" onsubmit="event.preventDefault(); publicarComentario();">
+        <div class="comment-form-row">
+          <div class="input-group" style="flex: 2;">
+            <input type="text" id="autor-nome" placeholder="Seu nome ou apelido" required>
+          </div>
+          <div class="input-group" style="flex: 1;">
+            <select id="autor-tipo" aria-label="Tipo de publicação">
+              <option value="relato">🩺 Relato / Experiência</option>
+              <option value="duvida">❓ Dúvida</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <textarea id="autor-mensagem" rows="3" placeholder="Escreva seu comentário aqui..." required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Publicar Comentário</button>
+      </form>
+
+      <!-- Abas de Filtro de Comentários -->
+      <div class="comment-filters">
+        <button type="button" id="filtro-todos" class="filter-tab active" onclick="alterarFiltroComentarios('todos')">
+          Todos os Comentários
+        </button>
+        <button type="button" id="filtro-atual" class="filter-tab" onclick="alterarFiltroComentarios('atual')" style="display: none;">
+          Sobre a Condição Atual
+        </button>
+      </div>
+
+      <!-- Feed de comentários registrados -->
+      <div id="feed-comentarios" class="comments-feed"></div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>© MedInfo Digital - As informações fornecidas não substituem uma consulta médica profissional.</p>
+  </footer>
+
+  <script src="dados.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
